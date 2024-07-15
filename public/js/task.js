@@ -9,6 +9,7 @@
  * @author creator-solutions/owen
  */
 class TaskHandler {
+
     /**
      * Opens the popup form and populates
      * the form fields with the data from
@@ -52,9 +53,6 @@ class TaskHandler {
             },
             error: function (xhr, status, error) {
                 alert("Failed to delete task: ", error);
-                console.error("Error:", error);
-                console.error("Status:", status);
-                console.error("Response:", xhr.responseText);
             },
         });
         this.showOverlayAndPopUp();
