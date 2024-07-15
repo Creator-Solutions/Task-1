@@ -60,11 +60,21 @@ class TaskController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Custom function to locate the specific entry
+     * in the database
+     *
+     * @param string $id
+     * @return void
      */
-    public function edit(string $id)
+    public function find(string $id)
     {
-        //
+        try {
+            $task = TaskEntry::findOrFail($id);
+            return response()->json(['message' => 'Task found successfully', 'task' => $task, 'status' => true]);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => 'Could not find task', 'status' => false]);
+            Log::info($ex->getMessage());
+        }
     }
 
     /**
@@ -72,7 +82,30 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            // Validate incoming request
+            $validatedData = $request->validate([
+                'tasktitle' => 'required|string|max:50',
+                'taskdescription' => 'nullable|string',
+                'taskcompleted' => 'boolean',
+            ]);
+
+            // Find the task by ID
+            $task = TaskEntry::findOrFail($id);
+
+            // Update task attributes
+            $task->task_title = $validatedData['tasktitle'];
+            $task->task_description = $validatedData['taskdescription'];
+            $task->task_completed = $request->has('taskcompleted') ? true : false;
+
+            // Save the updated task
+            $task->save();
+
+            return response()->json(['message' => 'Task updated successfully', 'status' => true]);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => 'Could not update task', 'status' => false]);
+            Log::info($ex->getMessage());
+        }
     }
 
     /**

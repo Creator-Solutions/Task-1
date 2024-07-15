@@ -85,8 +85,10 @@
                         class="h-[25px] border-[1px] border-[#c0c0c0] rounded-md pl-2 focus:outline-none" />
                     <label for="taskcompleted" class="ml-4">Task Completed</label>
                 </div>
-                <input type="button" value="Create Task" onclick="TaskHandler.onCreateTask(event)"
+                <input type="button" value="Submit" id="btn-submit" onclick="TaskHandler.onCreateTask(event)"
                     class="w-9/12 h-[35px] m-auto mt-4 border-[1px] border-black rounded-md hover:cursor-pointer" />
+                <input type="button" value="Submit" id="btn-submitEdit"
+                    class="w-9/12 h-[35px] m-auto mt-4 hidden border-[1px] border-black rounded-md hover:cursor-pointer" />
             </form>
         </div>
     </div>

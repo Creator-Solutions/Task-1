@@ -16,5 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::resource('/', TaskController::class);
 
-Route::post('/tasks/store', [TaskController::class, 'store'])->name('tasks.store');
-Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+Route::post('/tasks/store', [TaskController::class, 'store'])->name('tasks.store'); // create the entry
+Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy'); // delete the entry
+Route::get('/tasks/{id}', [TaskController::class, 'find'])->name('tasks.find'); // Locate the entry
+Route::put('/tasks/{id}', [TaskController::class, 'update'])->name('tasks.update'); //update
