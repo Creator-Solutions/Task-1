@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TaskEntry;
+use Illuminate\Console\View\Components\Task;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -79,6 +80,14 @@ class TaskController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $task = TaskEntry::findOrFail($id);
+            $task->delete();
+
+            return response()->json(['message' => 'Task deleted successfully', 'status' => true]);
+        } catch (\Exception $ex) {
+            return response()->json(['message' => 'Could not delete task', 'status' => false]);
+            Log::info($ex->getMessage());
+        }
     }
 }

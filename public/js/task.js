@@ -10,21 +10,28 @@
  */
 class TaskHandler {
     static onEdit(taskId) {
-        alert("Edit task ID: " + taskId);
-        // Implement edit functionality, e.g., redirect to edit route
-        // window.location.href = `/tasks/${taskId}/edit`;
+        this.showOverlayAndPopUp();
     }
 
     static onDelete(taskId) {
         $.ajax({
-            url: `/task/delete/${taskId}`,
-            type: "POST",
+            url: `/tasks/${taskId}`,
+            method: "DELETE",
             contentType: "application/json",
-            data: JSON.stringify({
-                tasktitle: taskTitle,
-                taskdescription: taskDescription,
-                taskcompleted: taskCompleted,
-            }),
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            success: function (response) {
+                //Reference Class as 'this' is not preserved in the success callback
+                alert("Task Deleted successfully");
+                window.location.reload();
+            },
+            error: function (xhr, status, error) {
+                alert("Failed to delete task: ", error);
+                console.error("Error:", error);
+                console.error("Status:", status);
+                console.error("Response:", xhr.responseText);
+            },
         });
     }
 
