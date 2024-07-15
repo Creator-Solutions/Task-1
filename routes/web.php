@@ -15,3 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::resource('/', TaskController::class);
+
+Route::post('/tasks/store', [TaskController::class, 'store'])->name('tasks.store');
+Route::post('/tasks/delete/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\TaskEntry;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * -----------------
@@ -30,27 +32,30 @@ class TaskController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
-    }
+        Log::info($request->getContent());
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        // Validate incoming request
+        $validatedData = $request->validate([
+            'tasktitle' => 'required|string|max:50',
+            'taskdescription' => 'nullable|string',
+            'taskcompleted' => 'boolean',
+        ]);
+
+        // Create a new task entry
+        $task = TaskEntry::create([
+            'task_title' => $validatedData['tasktitle'],
+            'task_description' => $validatedData['taskdescription'],
+            'task_completed' => $request->has('taskcompleted') ? true : false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // Return JSON response
+        return response()->json(['message' => 'Task created successfully', 'status' => true]);
     }
 
     /**
