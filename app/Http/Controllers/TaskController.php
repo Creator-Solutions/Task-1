@@ -37,26 +37,45 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info($request->getContent());
 
-        // Validate incoming request
-        $validatedData = $request->validate([
-            'tasktitle' => 'required|string|max:50',
-            'taskdescription' => 'nullable|string',
-            'taskcompleted' => 'boolean',
-        ]);
+        try {
+            // Validate incoming request
+            $validatedData = $request->validate([
+                'tasktitle' => 'required|string|max:50',
+                'taskdescription' => 'nullable|string',
+                'taskcompleted' => 'boolean',
+            ]);
 
-        // Create a new task entry
-        $task = TaskEntry::create([
-            'task_title' => $validatedData['tasktitle'],
-            'task_description' => $validatedData['taskdescription'],
-            'task_completed' => $request->has('taskcompleted') ? true : false,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+            // Extra validation check according validate rule
+            if (strlen($validatedData['taskdescription']) > 255) {
+                return response()->json(['message' => 'Task description must not exceed 255 characters', 'status' => false], 422);
+            }
 
-        // Return JSON response
-        return response()->json(['message' => 'Task created successfully', 'status' => true]);
+            //Check if a task already exists to cater for duplication of records
+            if (TaskEntry::where('task_title', $validatedData['tasktitle'])->exists()) {
+                return response()->json(['message' => 'Task title already exists', 'status' => false], 200);
+            }
+
+            // Create a new task entry
+            $task = TaskEntry::create([
+                'task_title' => $validatedData['tasktitle'],
+                'task_description' => $validatedData['taskdescription'],
+                'task_completed' => $request->has('taskcompleted') ? true : false,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Check if task is populated
+            if ($task) {
+                // Return JSON response
+                return response()->json(['message' => 'Task created successfully', 'status' => true]);
+            } else {
+                return response()->json(['message' => 'Failed to create task', 'status' => false], 500);
+            }
+        } catch (\Exception $ex) {
+            return response()->json(['message' => 'Could not create task', 'status' => false], 500);
+            Log::info($ex->getMessage());
+        }
     }
 
     /**
@@ -96,8 +115,7 @@ class TaskController extends Controller
             // Update task attributes
             $task->task_title = $validatedData['tasktitle'];
             $task->task_description = $validatedData['taskdescription'];
-            $task->task_completed = $request->has('taskcompleted') ? true : false;
-
+            $task->task_completed = $request->has('taskcompleted') && $request->input('taskcompleted') == '1';
             // Save the updated task
             $task->save();
 

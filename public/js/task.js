@@ -9,7 +9,6 @@
  * @author creator-solutions/owen
  */
 class TaskHandler {
-
     /**
      * Opens the popup form and populates
      * the form fields with the data from
@@ -52,7 +51,7 @@ class TaskHandler {
                     });
             },
             error: function (xhr, status, error) {
-                alert("Failed to delete task: ", error);
+                alert('Could not fetch task');
             },
         });
         this.showOverlayAndPopUp();
@@ -69,6 +68,7 @@ class TaskHandler {
         const taskDescription =
             document.getElementById("taskdescription").value;
         const taskCompleted = document.getElementById("taskcompleted").checked;
+        console.log(taskCompleted);
 
         $.ajax({
             url: `/tasks/${id}`,
@@ -86,12 +86,21 @@ class TaskHandler {
                 //Reference Class as 'this' is not preserved in the success callback
                 TaskHandler.hideOverlayAndPopup();
                 alert("Task updated successfully");
+
                 window.location.reload();
             },
             error: function (xhr, status, error) {
-                alert("Failed to update task: ", error);
+                alert('Could not edit task');
             },
         });
+    }
+
+    static onShowPopUp() {
+        this.showOverlayAndPopUp();
+    }
+
+    static onClosePopUp() {
+        this.hideOverlayAndPopup();
     }
 
     /**
@@ -114,10 +123,7 @@ class TaskHandler {
                 window.location.reload();
             },
             error: function (xhr, status, error) {
-                alert("Failed to delete task: ", error);
-                console.error("Error:", error);
-                console.error("Status:", status);
-                console.error("Response:", xhr.responseText);
+                alert('Could not delete task');
             },
         });
     }
@@ -154,13 +160,24 @@ class TaskHandler {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             success: function (response) {
-                //Reference Class as 'this' is not preserved in the success callback
-                TaskHandler.hideOverlayAndPopup();
-                alert("Task created successfully");
-                window.location.reload();
+                /**
+                 * Check the response for a false response
+                 * button a successfull ajax call
+                 */
+                if (!response.status) {
+                    document.getElementById("error").innerText =
+                        response.message;
+                } else {
+                    //Reference Class as 'this' is not preserved in the success callback
+                    TaskHandler.hideOverlayAndPopup();
+
+                    alert("Task created successfully");
+                    console.log(response);
+                    window.location.reload();
+                }
             },
             error: function (xhr, status, error) {
-                alert("Failed to create task: ", error);
+                alert('Could not create task');
             },
         });
     }

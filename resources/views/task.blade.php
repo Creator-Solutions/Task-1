@@ -64,11 +64,17 @@
 
     <!-- New Task Form PopUp-->
     <div id="popup"
-        class="w-1/3 h-96 m-auto hidden bg-white overlfow-y-scroll z-50 opacity-100 shadow-xl rounded-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-        <div class="w-full h-10 flex">
+        class="w-1/3 h-96 border-[1px] border-gray m-auto hidden bg-white overlfow-y-scroll z-50 opacity-100 shadow-xl rounded-md absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div class="w-full h-10  flex flex-row justify-between">
             <p class="self-center pl-4">New Task</p>
+            <button onclick="TaskHandler.onClosePopUp()" class="edit-button mr-4">
+                <img src="/images/close.svg" class="w-auto hover:cursor-pointer" />
+            </button>
         </div>
         <div class="w-9/12 h-auto m-auto mt-2">
+            <div>
+                <p id="error" class="text-red-400 text-center"></p>
+            </div>
             <form id="taskForm" class="flex flex-col">
                 <div class="w-full h-auto flex flex-col">
                     <label for="tasktitle">Task Title</label>
